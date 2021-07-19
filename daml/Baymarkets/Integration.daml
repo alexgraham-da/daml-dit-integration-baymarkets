@@ -1,0 +1,117 @@
+-- Copyright (c) 2020, Digital Asset (Switzerland) GmbH and/or its affiliates.
+-- SPDX-License-Identifier: Apache-2.0
+
+daml 1.2
+
+module Baymarkets.Integration where
+
+template RequestStartFeed
+  with
+    integrationParty : Party
+  where
+    signatory integrationParty
+
+template RequestStopFeed
+  with
+    integrationParty : Party
+  where
+    signatory integrationParty
+
+template ErrorResponse
+  with
+    integrationParty : Party
+    timestamp : Text
+    status : Int
+    error : Text
+    message : Text
+    path : Text
+  where
+    signatory integrationParty
+
+template RequestSystemStatus
+  with
+    integrationParty : Party
+  where
+    signatory integrationParty
+
+-- Integration <-- Baymarkets
+template ClaraSystemStatus
+  with
+    integrationParty : Party
+    environment : Text
+    version : Text
+    scmRevision : Text
+  where
+    signatory integrationParty
+
+-- Integration --> Baymarkets
+template RequestClearedPositions
+  with
+    integrationParty : Party
+  where
+    signatory integrationParty
+
+-- Integration <-- Baymarkets
+template ClearedPosition
+  with
+    integrationParty : Party
+    accountId : Text -- the id of the account where the position is held (currently party id)
+    instrumentId : Text
+    currencyId : Text
+    quantityCredit : Decimal -- The quantity credit of a position is the sum of the quantity of the buy transactions (always positive)
+    quantityDebit : Decimal -- The quantity debit of a position is the sum of the quantity of the sell transactions, i.e. this is always a negative number.
+    amountCredit : Decimal -- The amount credit of a position is the sum of the amount of the sell transactions, i.e. this is always a negative number.
+    amountDebit: Decimal -- The amount debit of a position is the sum of the amount of the buy transactions, i.e. this is always a positive number.
+    -- createdAt : Time TODO: add this back
+  where
+    signatory integrationParty
+
+
+-- Integration --> Baymarkets
+template RequestCollateralPositions
+  with
+    integrationParty : Party
+  where
+    signatory integrationParty
+
+-- Integration <-- Exberry
+template CollateralPosition
+  with
+    integrationParty : Party
+    accountId : Text
+    assetId : Text
+    quantity : Decimal -- The net quantity of the position
+  where
+    signatory integrationParty
+
+
+-- Integration --> Baymarkets
+template RequestMarginCalculation
+  with
+    integrationParty : Party
+  where
+    signatory integrationParty
+
+-- Integration <-- Baymarkets
+template MarginCalculationResponse
+  with
+    integrationParty : Party
+    calculationId : Int
+  where
+    signatory integrationParty
+
+
+-- Integration --> Baymarkets
+template RequestMarkToMarketCalculation
+  with
+    integrationParty : Party
+  where
+    signatory integrationParty
+
+-- Integration <-- Baymarkets
+template MarkToMarketCalculationResponse
+  with
+    integrationParty : Party
+    calculationId : Int
+  where
+    signatory integrationParty
